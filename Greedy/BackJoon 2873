@@ -1,0 +1,132 @@
+/*
+1. 문제
+R행 C열을 입력받는다. 각 칸에는 기쁨을 나타낸 숫자가 적혀있다. 
+롤러코스터를 탄 사람이 얻을 수 있는 기쁨은 지나간 칸의 기쁨의 합.
+가장 큰 기쁨을 주는 롤러코스터가 움지여야하는 루트를 출력.
+
+조건 1) 첫째 줄에 R과 C가 주어진다. (2 ≤ R, C ≤ 1000) 둘째 줄부터 R개 줄에는 각 칸을 지나갈 때 얻을 수 있는 기쁨이 주어진다. 
+        이 값은 1000보다 작은 양의 정수이다.
+     2) 첫째 줄에 가장 가장 큰 기쁨을 주는 롤러코스터는 가장 왼쪽 위 칸부터 가장 오른쪽 아래 칸으로 어떻게 움직이면 되는지를 출력한다. 
+       위는 U, 오른쪽은 R, 왼쪽은 L, 아래는 D로 출력한다. 정답은 여러 가지 일 수도 있다.
+
+2. 풀이
+1) 행이 홀수인 경우
+2) 열이 홀수인 경우
+3) 행, 열 모두 짝수인 경우
+1)과 2)는 칸을 모두 지나기 때문에 행과 열의 수에 맞춰 지나가면된다.
+3)의 경우 한 싸이클(같은 위치에 위치할)이 인접한 2줄이 된다.
+행과 열이 모두 짝수인 경우에는 반드시 한칸이상 못지나게된다.
+그렇게 되려면 행과 열번호의 합이 홀수인 칸들 중 가장 작은수를 지나치지 않을때 최댓값이 만들어진다.
+지나가지 않을 칸을 포함한 2*2칸을 제외하고 그 지점까지 시작점-제외지점 , 종료점-제외지점 싸이클을 돌린다.
+https://dundung.tistory.com/45
+
+3. 한번에 풀지 못했다면 이유?
+1) BufferedReader를 사용하여 입력을 받으려했는데 이해를 못해서 애먹었다.
+BufferedReader를 사용한 br.readLine()은 한 줄을 입력받음. 공백이 포함되었기 때문에 공백에 따라 값을 구분지어 입력 받기 위해
+StringTokenizer를 사용하여 공백에 따른 입력값을 받는다. 또한 엔터로 실행이 구분되기 때문에 배열의 값을 넣기 위해서 
+배열의 행마다 새로 선언해줘야한다.
+2)풀이 방식에서 행과 열이 모두 짝수일때 접근 방법을 생각하지 못했다. 단순하게 시작과 끝에 인접한 부분의 작은 값만 피해서 지나간다고 생각했다.
+
+*/
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+
+	public static void main(String[] args) throws IOException{
+		// TODO Auto-generated method stub
+		
+		BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st=new StringTokenizer(br.readLine()," ");
+		
+		int R =Integer.parseInt(st.nextToken());
+		int C=Integer.parseInt(st.nextToken());
+		int[][] Roller=new int[R][C];
+		StringBuilder result=new StringBuilder();
+		StringBuilder s=new StringBuilder();
+		
+		for(int i=0;i<R;i++) {
+			st=new StringTokenizer(br.readLine()," ");
+			for(int j=0;j<C;j++) {
+				int x=Integer.parseInt(st.nextToken());
+				Roller[i][j]=x;
+			}
+		}
+		if(R%2==1) {
+			for(int i=0;i<R;i++) {
+				for(int j=0;j<C-1;j++) {
+					if(i%2==0) {
+						result.append("R");
+					}else {
+						result.append("L");//System.out.print("L");
+					}
+				}
+				if(i<R-1)
+					result.append("D");//System.out.print("D");
+			}
+		}
+		else if(C%2==1) {
+			for(int i=0;i<C;i++) {
+				for(int j=0;j<R-1;j++) {
+					if(i%2==0) {
+						result.append("D");//System.out.print("D");
+					}else {
+						result.append("U");//System.out.print("U");
+					}
+				}
+				if(i<C-1)
+					result.append("R");//System.out.print("R");
+			}
+		}
+		
+		else {
+			int x=0,y=0;
+			int min=1000;
+			for(int i=0;i<R;i++) {
+				for(int j=0;j<C;j++) {
+					if((i+j)%2==1&&min>Roller[i][j]) {
+						x=i;
+						y=j;
+						min=Roller[i][j];
+					}
+				}
+			}
+			for (int i = 0; i < 2* (x/ 2); i++) {
+				for (int j = 0; j < C - 1; j++) {
+					if (i % 2 == 0)
+						result.append("R");
+					else
+						result.append("L");
+				}
+				result.append("D");
+			}
+			for (int i = 0; i < 2*((R-x-1) / 2); i++) {
+				for (int j = 0; j < C - 1; j++) {
+					
+					if (i % 2 ==1)
+						s.append("L");
+					else
+						s.append("R");
+				}
+				s.append("D");
+			}
+			for(int i=0;i<(y/2);i++) {
+				result.append("DRUR");
+			}
+			for(int i=0;i<((C-y-1)/2);i++) {
+				s.append("DRUR");
+			}
+			if(x%2==0) {
+				result.append("DR");
+			}else {
+				result.append("RD");
+			}
+		}s.reverse();
+		result.append(s);
+		
+		System.out.println(result);
+	}
+}
