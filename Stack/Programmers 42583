@@ -1,0 +1,57 @@
+/*
+1. 문제
+다리의 길이(bridge_length)와 받칠 수 있는 무게(weight) truck무게를 담은 배열(truck_weights[])이 주어진다.
+예를 들어, 트럭 2대가 올라갈 수 있고 무게를 10kg까지 견디는 다리가 있습니다. 
+무게가 [7, 4, 5, 6]kg인 트럭이 순서대로 최단 시간 안에 다리를 건너려면 다음과 같이 건너야 합니다.
+
+경과 시간	  다리를 지난 트럭	  다리를 건너는 트럭	  대기 트럭
+0	          []	               []	                  [7,4,5,6]
+1~2	        []	               [7]	                [4,5,6]
+3	          [7]	               [4]	                [5,6]
+4	          [7]	               [4,5]	              [6]
+5	          [7,4]	             [5]	                [6]
+6~7	        [7,4,5]	           [6]	                []
+8	          [7,4,5,6]	         []	                  []
+
+2. 풀이
+다리 길이만큼 0을 넣어준다.
+무게의 합 sum이 weight를 초과하면 truck은 건너지 못하고 대기하기 때문에 0을 queue에 넣어준다.
+대기 트럭이 없으면 다리에 남아있는 트럭이 건널 때까지를 계산하기 위해
+bridgeQ가 빌 때까지 count를 세어준다.
+
+3. 한 번에 풀지 못했다면 이유?
+--------------------------------------------------------------------------------------------*/
+import java.util.*;
+class Solution {
+    public int solution(int bridge_length, int weight, int[] truck_weights) {
+        int answer = 0;
+        Queue<Integer> truckQ=new LinkedList<Integer>();
+        Queue<Integer> bridgeQ=new LinkedList<Integer>();
+        int sum=0;
+        int count=0;
+        for(int i=0;i<truck_weights.length;i++){
+            truckQ.add(truck_weights[i]);
+        }
+        for(int i=0;i<bridge_length;i++){
+            bridgeQ.add(0);
+        }
+        while(!truckQ.isEmpty()){
+            sum-=bridgeQ.poll();
+            if((sum+truckQ.peek())<=weight){
+                sum+=truckQ.peek();
+                bridgeQ.add(truckQ.poll());
+                count++;
+            }else{
+                bridgeQ.add(0);
+                count++;
+            }       
+        }
+        while(!bridgeQ.isEmpty()){
+            bridgeQ.poll();
+            count++;
+        }
+        answer=count;
+
+        return answer;
+    }
+}
