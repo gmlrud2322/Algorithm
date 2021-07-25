@@ -1,0 +1,67 @@
+/*
+1. 문제
+ 1) 인쇄 대기목록의 가장 앞에 있는 문서(J)를 대기목록에서 꺼냅니다.
+ 2) 나머지 인쇄 대기목록에서 J보다 중요도가 높은 문서가 한 개라도 존재하면 J를 대기목록의 가장 마지막에 넣습니다.
+ 3) 그렇지 않으면 J를 인쇄합니다.
+ 인쇄 요청한 문서가 현재 대기목록의 위치를 알려주는 location.
+ 내가 요청한 문서가 몇 번째로 인쇄되는지 return하는 solution함수 작성.
+ 
+ priorities	        location	return
+[2, 1, 3, 2]	       2	      1
+[1, 1, 9, 1, 1, 1]	 0	      5
+
+2. 풀이
+Queue를 이용해 현재 위치를 나타내는 locQ, 문서의 중요도가 담긴 prioQ를 만든다.
+중요도가 높은 순서부터 출력되는 거기 때문에 sort한 값을 담은 sortQ.
+결과의 위치들을 담는 ArrayList result.
+
+prioQ의 peek()값이 sortQ의 값보다 작으면 뒤로 보내야 하기 때문에
+peek()값을 뒤에 쌓아준 뒤, poll()해준다. (locQ 동일)
+sortQ의 peek()값과 같으면 인쇄가 되는 것이므로 전부 poll()해주고,
+그 위치 값을 저장할 result에 쌓아준다.
+
+출력할 location의 값이 result에서 몇 번째에 있는지 출력한다.
+
+3. 한 번에 풀지 못했다면 이유?
+-----------------------------------------------------------------------------------------------*/
+
+import java.util.*;
+class Solution {
+    public int solution(int[] priorities, int location) {
+        int answer = 0;
+        Queue<Integer> prioQ=new LinkedList<Integer>();
+        Queue<Integer> locQ=new LinkedList<Integer>();
+        Integer[] prio=new Integer[priorities.length];
+        Queue<Integer> sortQ=new LinkedList<Integer>();
+        ArrayList<Integer> result=new ArrayList<Integer>();
+        
+        for(int i=0;i<priorities.length;i++){
+            prioQ.add(priorities[i]);
+            locQ.add(i);
+            prio[i]=priorities[i];
+        }
+        Arrays.sort(prio, Collections.reverseOrder());
+        for(int i=0;i<priorities.length;i++){
+            sortQ.add(prio[i]);
+        }
+        while(!prioQ.isEmpty()){
+            if(prioQ.peek()<sortQ.peek()){
+                prioQ.add(prioQ.peek());
+                prioQ.poll();
+                locQ.add(locQ.peek());
+                locQ.poll();
+            }else{
+                result.add(locQ.poll());
+                prioQ.poll();
+                sortQ.poll();
+            }
+        }
+        for(int i=0;i<result.size();i++){
+            if(result.get(i)==location){
+                answer=i+1;
+                break;
+            }
+        }
+        return answer;
+    }
+}
