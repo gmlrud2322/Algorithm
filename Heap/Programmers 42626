@@ -1,0 +1,46 @@
+/*
+1. 문제
+Leo가 가진 음식의 스코빌 지수를 담은 배열 scoville과 원하는 스코빌 지수 K가 주어질 때, 
+모든 음식의 스코빌 지수를 K 이상으로 만들기 위해 섞어야 하는 최소 횟수를 return 하도록 solution 함수를 작성해주세요.
+
+섞은 음식의 스코빌 지수 = 가장 맵지 않은 음식의 스코빌 지수 + (두 번째로 맵지 않은 음식의 스코빌 지수 * 2)
+모든 음식의 스코빌 지수를 K 이상으로 만들 수 없는 경우에는 -1을 return 합니다.
+
+scoville=[1, 2, 3, 9, 10, 12], K=7 -> return 2
+scoville=[5, 3, 3, 2, 7, 8], K=4 -> return 2
+
+2. 풀이
+PriorityQueue를 사용해 heap정렬을 하면 최소값부터 차례로 정렬이 된다.
+그렇기 때문에 heap의 peek()값이 K 이상이면 더 이상 섞지 않아도 된다. 
+
+3. 한 번에 풀지 못했다면 이유?
+heap의 개념 자체를 몰랐다. heap구현을 실제로 해보고 이해하는 게 좋을 것 같다.
+*트리구조를 생각하여 max-heap, min-heap을 구현할 수 있다.
+*root=(c-1)/2
+PriorityQueue를 알면 쉽게 풀 수 있었던 문제였는데 새롭게 알았다.
+
+---------------------------------------------------------------------------------*/
+import java.util.*;
+class Solution {
+    public int solution(int[] scoville, int K) {
+        int answer = 0;
+        
+        PriorityQueue<Integer> heap=new PriorityQueue();
+        
+        for(int s: scoville){
+            heap.add(s);
+        }
+        while(heap.peek()<K){
+            if(heap.size()==1){
+                return -1;
+            }
+            int a=heap.poll();
+            int b=heap.poll();
+            
+            int result=a+(b*2);
+            heap.add(result);
+            answer++;
+        }
+        return answer;
+    }
+}
