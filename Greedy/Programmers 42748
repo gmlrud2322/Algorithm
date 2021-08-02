@@ -15,7 +15,7 @@ ArrayList에 i-j에 해당하는 배열을 넣어준 뒤 Collections.sort를 사
 ArrayList는 clear()을 통해 초기화 시켜준다.
 
 3. 한 번에 풀지 못했다면 이유?
-결과는 나오지만 런타임 에러 발생.
+실수로 commands길이 잘못 작성.
 
 --------------------------------------------------------------------------------------*/
 import java.util.*;
@@ -23,7 +23,7 @@ class Solution {
     public int[] solution(int[] array, int[][] commands) {
         int[] answer = {};
         ArrayList<Integer> arr= new ArrayList();
-        answer=new int[commands[0].length];
+        answer=new int[commands.length];
         for(int a=0;a<commands.length;a++){
             int i=commands[a][0];
             int j=commands[a][1];
