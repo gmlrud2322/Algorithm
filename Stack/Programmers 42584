@@ -1,0 +1,78 @@
+/*
+1. 문제
+초 단위로 기록된 주식가격이 담긴 배열 prices가 매개변수로 주어질 때, 
+가격이 떨어지지 않은 기간은 몇 초인지를 return 하도록 solution 함수를 완성하세요.
+   
+   조건 1)prices의 각 가격은 1 이상 10,000 이하인 자연수입니다.
+       2)prices의 길이는 2 이상 100,000 이하입니다.
+
+prices	            return
+[1, 2, 3, 2, 3]	    [4, 3, 1, 1, 0]
+
+2. 풀이
+단순하게 순수 배열만을 이용해 풀면 된다.
+
+*시간이 된다면 priority queue를 사용해 풀어볼것!!
+
+3. 한 번에 풀지 못했다면 이유?
+원래 풀었던 방법도 테스트케이스는 모두 통과하지만 시간초과문제로 효율성문제에서 실패했다.
+내 기존 코드는 굳이 queue를 사용할 필요도 없으며, 최악의 경우 모든 경우의 수를 봐야한다고 했다.
+순수 배열로 푼 방법도 모든 경우의 수를 보는건 줄 알았는데 뭔가 다른 차이가 있는 것 같다.
+아직 시간복잡도를 제대로 이해 못해서 생긴 일인 것 같다.
+
+---------------------------------------------------------------------------------------------------------------*/
+import java.util.*;
+class Solution {
+    public int[] solution(int[] prices) {
+        int[] answer = {};
+        answer=new int[prices.length];
+        for(int i=0;i<prices.length;i++){
+            int count=0;
+            for(int j=i+1;j<prices.length;j++){
+                count++;
+                if(prices[i]>prices[j]){
+                    break;
+                }
+            }answer[i]=count;
+        }
+        return answer;
+    }
+}
+/*--------------------------------------------------------------------------------------------------------------
+import java.util.*;
+class Solution {
+    public int[] solution(int[] prices) {
+        int[] answer = {};
+        ArrayList<Integer> arr= new ArrayList(); //주식가격을 비교하기 위해 만든 list
+        Queue<Integer> q=new LinkedList<>();
+        ArrayList<Integer> result= new ArrayList();
+        for(int i:prices){
+            q.add(i);
+            arr.add(i);
+        }
+        int count=0;
+        while(!q.isEmpty()){
+            count++;
+            if(count==(arr.size())){
+                result.add(count-1);
+                count=0;
+                q.poll();
+                arr.remove(0);
+                continue;
+            } //주식이 담긴 list를 전부 돌면 queue의 값 poll, 초를 result에 삽입.
+            if(q.peek()>arr.get(count-1)){
+                result.add(count-1);
+                count=0;
+                q.poll();
+                arr.remove(0);
+            }//peek값보다 작으면 result리스트에 초를 계산한 count 삽입
+        }
+        
+        answer=new int[result.size()];
+        for(int i=0;i<result.size();i++){
+            answer[i]=result.get(i);
+        } //axswer에 결과값들 넣어주기.
+        return answer;
+    }
+}
+*/
