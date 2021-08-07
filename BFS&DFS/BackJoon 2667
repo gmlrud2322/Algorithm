@@ -1,0 +1,119 @@
+/*
+1. 문제: 단지번호 붙이기
+정사각형 모양의 지도가 있다. 1은 집이 있는 곳을, 0은 집이 없는 곳을 나타낸다. 
+철수는 이 지도를 가지고 연결된 집의 모임인 단지를 정의하고, 단지에 번호를 붙이려 한다. 
+여기서 연결되었다는 것은 어떤 집이 좌우, 혹은 아래위로 다른 집이 있는 경우를 말한다. 
+대각선상에 집이 있는 경우는 연결된 것이 아니다.
+지도를 입력하여 단지수를 출력하고, 각 단지에 속하는 집의 수를 오름차순으로 정렬하여 출력하는 프로그램을 작성하시오.
+
+입력) 첫 번째 줄에는 지도의 크기 N(정사각형이므로 가로와 세로의 크기는 같으며 5≤N≤25)이 입력되고, 그 다음 N줄에는 각각 N개의 자료(0혹은 1)가 입력된다.
+출력) 첫 번째 줄에는 총 단지수를 출력하시오. 그리고 각 단지내 집의 수를 오름차순으로 정렬하여 한 줄에 하나씩 출력하시오.
+
+입력           |   출력
+7              |   3
+0110100        |   7
+0110101        |   8
+1110101        |   9
+0000111        |
+0100000        |
+0111110        |
+0111000        |
+
+2. 풀이
+dfs or bfs를 사용하여 연결되어있는 단지의 갯수를 세어주면 된다.
+집이 있으면서 지나가지 않은 곳을 찾은 후, bfs를 사용하여 상, 하, 좌, 우에 있는 
+동일 조건인 위치를 queue row와 column에 쌓아준다. 지나간 지점은 boolean check[][]를 true로 만들어 준다.
+bfs()를 통해 한 단지를 찾아낼 수 있으며, 그 수를 ArrayList에 쌓아줬다.
+
+3. 한 번에 풀지 못했다면 이유?
+-----------------------------------------------------------------------------*/
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+public class Main{
+	static int N;
+	static int[][] map;
+	static boolean[][] check;
+	public static void main(String[] args) {
+		
+		Scanner scan=new Scanner(System.in);
+		N=scan.nextInt();
+		map=new int[N][N];
+		check=new boolean[N][N];
+		ArrayList<Integer> arr=new ArrayList<>();
+		String[] s=new String[N];
+		
+		for(int i=0;i<N;i++) {
+			s[i]=scan.next();
+		}
+		for(int i=0;i<N;i++) {
+			for(int j=0;j<N;j++) {
+				map[i][j]=s[i].charAt(j)-'0';
+			}
+		}
+
+		for(int i=0;i<N;i++) {
+			for(int j=0;j<N;j++) {
+				if(map[i][j]==1&&check[i][j]==false) {
+					arr.add(bfs(i,j));			
+				}
+			}
+		}
+		Collections.sort(arr);
+		System.out.println(arr.size());
+		for(int i=0;i<arr.size();i++) {
+			System.out.println(arr.get(i));
+		}
+		scan.close();
+	}
+
+	public static int bfs(int i, int j) {
+		Queue<Integer> row = new LinkedList<Integer>();
+		Queue<Integer> column = new LinkedList<Integer>();
+		row.add(i);
+		column.add(j);
+		check[i][j] = true;
+		int count=1;
+
+		while (!row.isEmpty()) {
+			int r = row.poll();
+			int c = column.poll();
+
+			if (r - 1 >= 0) {
+				if (map[r - 1][c] == 1 && check[r - 1][c] == false) {
+					row.add(r - 1);
+					column.add(c);
+					check[r - 1][c] = true;
+					count++;
+				}
+			} // 상
+			if (r + 1 < N) {
+				if (map[r + 1][c] == 1 && check[r + 1][c] == false) {
+					row.add(r + 1);
+					column.add(c);
+					check[r + 1][c] = true;
+					count++;
+				}
+			} // 하
+			if (c - 1 >= 0) {
+				if (map[r][c - 1] == 1 && check[r][c - 1] == false) {
+					row.add(r);
+					column.add(c - 1);
+					check[r][c - 1] = true;
+					count++;
+				}
+			} // 좌
+			if (c + 1 < N) {
+				if (map[r][c + 1] == 1 && check[r][c + 1] == false) {
+					row.add(r);
+					column.add(c + 1);
+					check[r][c + 1] = true;
+					count++;
+				}
+			} // 우
+		}
+		return count;
+	}
+}
