@@ -31,7 +31,7 @@ public class Main{
 		ArrayList<Integer> result=new ArrayList<>();
 		do {
 			String input=br.readLine();
-			String[] s=input.split("\\s+");
+			String[] s=input.split(" ");
 			switch(s[0]) {
 			case "pop":
 				if(!stack.isEmpty())
