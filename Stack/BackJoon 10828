@@ -1,0 +1,71 @@
+/*
+1. 문제: 스택
+정수를 저장하는 스택을 구현한 다음, 입력으로 주어지는 명령을 처리하는 프로그램을 작성하시오.
+
+push X: 정수 X를 스택에 넣는 연산이다.
+pop: 스택에서 가장 위에 있는 정수를 빼고, 그 수를 출력한다. 만약 스택에 들어있는 정수가 없는 경우에는 -1을 출력한다.
+size: 스택에 들어있는 정수의 개수를 출력한다.
+empty: 스택이 비어있으면 1, 아니면 0을 출력한다.
+top: 스택의 가장 위에 있는 정수를 출력한다. 만약 스택에 들어있는 정수가 없는 경우에는 -1을 출력한다.
+
+2. 풀이
+입력되는 String을 split을 사용하여 공백을 기준으로 나눠 s[]에 저장한다.
+push의 경우는 공백 뒤 숫자가 있기 때문에 split 해줘야했고, 숫자는 s[1]에 저장된다.
+s[0]의 String이 각각 입력되는 값에 따라 switch case문에 의해 분류된다.
+
+3. 한 번에 풀지 못했다면 이유?
+시간초과문제 때문에 애를 먹었다. Scanner사용보다는 BufferedReader를 사용한
+빠른 입출력을 사용하도록 지향해야겠다.
+---------------------------------------------------------------------------------*/
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Stack;
+public class Main{
+	
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+		int N=Integer.parseInt(br.readLine());
+		Stack<Integer> stack=new Stack<Integer>();
+		ArrayList<Integer> result=new ArrayList<>();
+		do {
+			String input=br.readLine();
+			String[] s=input.split("\\s+");
+			switch(s[0]) {
+			case "pop":
+				if(!stack.isEmpty())
+					result.add(stack.pop());
+				else
+					result.add(-1);
+				N--;
+				break;
+			case "top":
+				if(!stack.isEmpty())
+					result.add(stack.peek());
+				else
+					result.add(-1);
+				N--;
+				break;
+			case "size":
+				result.add(stack.size());
+				N--;
+				break;
+			case "empty":
+				if(!stack.isEmpty())
+					result.add(0);
+				else
+					result.add(1);
+				N--;
+				break;
+			case "push":
+				stack.push(Integer.parseInt(s[1]));
+				N--;
+				break;
+			}
+		}while(N>0);
+		for(int i=0;i<result.size();i++) {
+			System.out.println(result.get(i));
+		}
+	}
+}
