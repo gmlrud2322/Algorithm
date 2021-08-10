@@ -1,0 +1,61 @@
+/*
+1. 문제: RGB거리
+RGB거리에는 집이 N개 있다. 거리는 선분으로 나타낼 수 있고, 1번 집부터 N번 집이 순서대로 있다.
+집은 빨강, 초록, 파랑 중 하나의 색으로 칠해야 한다. 각각의 집을 빨강, 초록, 파랑으로 칠하는 비용이 주어졌을 때, 
+아래 규칙을 만족하면서 모든 집을 칠하는 비용의 최솟값을 구해보자.
+i(2 ≤ i ≤ N-1)번 집의 색은 i-1번, i+1번 집의 색과 같지 않아야 한다.
+
+입력) 첫째 줄에 집의 수 N(2 ≤ N ≤ 1,000)이 주어진다. 
+      둘째 줄부터 N개의 줄에는 각 집을 빨강, 초록, 파랑으로 칠하는 비용이 1번 집부터 한 줄에 하나씩 주어진다. 
+      집을 칠하는 비용은 1,000보다 작거나 같은 자연수이다.
+출력) 첫째 줄에 모든 집을 칠하는 비용의 최솟값을 출력한다.
+
+2. 풀이
+단순하게 RGB중 최솟값을 선택하는 것이 최솟값이 아니다.
+만약 
+R   G   B 
+1  15  13
+1  90  87
+이런 식으로 가정한다면, 1이 가장 작은 값이므로 R을 선택하면 G나 B를 선택 해야하는데 R-B의 값은 89가 된다.
+하지만 B-R선택시 14로 최솟값이 된다. 그렇기 때문에 dp를 사용해 각각의 최솟값들을 저장하여 그 값들 중 최솟값을 출력하면 된다.
+
+3. 한 번에 풀지 못했다면 이유?
+---------------------------------------------------------------------------*/
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.util.StringTokenizer;
+
+class Main{
+  static long[][] min=new long[1001][1001];
+  static int[] red=new int[1001];
+  static int[] green=new int[1001];
+  static int[] blue=new int[1001];
+  public static void main(String[] args) throws IOException{
+    BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+    int N=Integer.parseInt(br.readLine());
+    StringTokenizer st;
+
+    for(int i=1;i<=N;i++){
+      st=new StringTokenizer(br.readLine());
+      red[i]=Integer.parseInt(st.nextToken());
+      green[i]=Integer.parseInt(st.nextToken());
+      blue[i]=Integer.parseInt(st.nextToken());
+    }
+    System.out.println(cost(N));
+  
+  }
+  public static long cost(int N){
+    min[1][0]=red[1];
+    min[1][1]=green[1];
+    min[1][2]=blue[1];
+    for(int i=2;i<=N;i++){
+      min[i][0]=Math.min((red[i]+min[i-1][1]),(red[i]+min[i-1][2]));
+      min[i][1]=Math.min((green[i]+min[i-1][0]),(green[i]+min[i-1][2]));
+      min[i][2]=Math.min((blue[i]+min[i-1][1]),(blue[i]+min[i-1][0]));
+    }
+    long result=Math.min(Math.min(min[N][0],min[N][1]),min[N][2]);
+    return result;
+  }
+}
