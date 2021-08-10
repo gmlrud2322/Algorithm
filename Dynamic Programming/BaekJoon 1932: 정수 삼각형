@@ -1,0 +1,72 @@
+/*
+1. 문제: 정수 삼각형
+맨 위층부터 시작해서 아래에 있는 수 중 하나를 선택하여 아래층으로 내려올 때, 
+이제까지 선택된 수의 합이 최대가 되는 경로를 구하는 프로그램을 작성하라. 
+아래층에 있는 수는 현재 층에서 선택된 수의 대각선 왼쪽 또는 대각선 오른쪽에 있는 것 중에서만 선택할 수 있다.
+삼각형의 크기는 1 이상 500 이하이다. 삼각형을 이루고 있는 각 수는 모두 정수이며, 범위는 0 이상 9999 이하이다.
+
+입력) 첫째 줄에 삼각형의 크기 n(1 ≤ n ≤ 500)이 주어지고, 둘째 줄부터 n+1번째 줄까지 정수 삼각형이 주어진다.
+출력) 첫째 줄에 합이 최대가 되는 경로에 있는 수의 합을 출력한다.
+
+입력             |  출력
+5                |  30
+7                |
+3 8              |
+8 1 0            |
+2 7 4 4          |
+4 5 2 6 5        |
+
+2. 풀이
+단순히 최댓값만 선택하는 것이 아닌, 경로가 왼쪽 또는 오른쪽 대각선으로밖에 갈 수 없다는 것을 고려하여 최댓값을 구해야 한다.
+맨 왼쪽변의 경로와 오른쪽변 경로 최댓값들은 양 끝의 값들만을 더한 값이 되고,
+그 사이의 경로는 왼쪽 위에서 온 최댓값과 오른쪽 위에서 온 최댓값에 자신의 값을 더한 값들 중 큰 값을 최댓값으로 가진다.
+이런 점화식을 갖고 MAX[][]를 memoization하여 저장하면 최댓값을 구할 수 있다.
+
+3. 한 번에 풀지 못했다면 이유?
+-------------------------------------------------------------------------------*/
+
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+class Main{
+  static int[][] tri=new int[501][501];
+  static long[][] MAX=new long[501][501];
+  public static void main(String[] args) throws IOException{
+    BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+    int n=Integer.parseInt(br.readLine());
+    StringTokenizer st;
+    for(int i=1;i<=n;i++){
+      st=new StringTokenizer(br.readLine());
+      for(int j=1;j<=i;j++){
+        tri[i][j]=Integer.parseInt(st.nextToken());
+      }
+    }
+    System.out.println(sum(n));
+  }
+  public static long sum(int n){
+    long result=0;
+    MAX[1][1]=tri[1][1];
+    for(int i=1;i<=n;i++){
+      for(int j=1;j<=i;j++){
+        if(j==1){
+          MAX[i][j]=tri[i][j]+MAX[i-1][j];
+        }
+        else if(j==i){
+          MAX[i][j]=tri[i][j]+MAX[i-1][j-1];
+        }
+        else{
+          MAX[i][j]=tri[i][j]+Math.max(MAX[i-1][j-1],MAX[i-1][j]);
+        }
+      }
+    }
+    long max=-1;
+    for(int i=1;i<=n;i++){
+      if(max<MAX[n][i]){
+        max=MAX[n][i];
+      }
+    }result=max;
+    return result;
+  }
+}
