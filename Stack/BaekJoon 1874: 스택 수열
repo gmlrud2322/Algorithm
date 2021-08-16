@@ -1,0 +1,63 @@
+/*
+1. 문제: 스택 수열
+입력) 첫 줄에 n (1 ≤ n ≤ 100,000)이 주어진다. 
+      둘째 줄부터 n개의 줄에는 수열을 이루는 1이상 n이하의 정수가 하나씩 순서대로 주어진다. 
+      물론 같은 정수가 두 번 나오는 일은 없다.
+출력) 입력된 수열을 만들기 위해 필요한 연산을 한 줄에 한 개씩 출력한다. 
+      push연산은 +로, pop 연산은 -로 표현하도록 한다. 불가능한 경우 NO를 출력한다.
+      
+2. 풀이
+출력 결과를 저장할 ArrayList, 수열을 만들기 위해 필요한 stack을 생성한다.
+수열은 1부터 n까지 오름차순으로 숫자가 push(), pop()되기 때문에 
+for문을 사용해 1부터 n까지 돌린다.
+그 안에서 stack이 차있을 때 동안 stack의 peek값이 수열의 값과 같으면 pop이 일어나야한다.
+
+3. 한 번에 풀지 못했다면 이유?
+while(!.stack.isEmpty())부분을 for문 안에 넣어 1부터 넣을 수 있도록 했으면 됐는데
+처음에 for문 안에 넣을 생각을 못하고 1~n까지를 또 다른 스택에 넣어서 만들었었다.
+그래서 예를 들어 12345의 수열을 만들게 되면 stack이 비게 되니까 도중에 끊어지고,
+"NO"가 출력됐다. 왜 for문에 넣을 생각을 처음에 못했는지 모르겠다.
+------------------------------------------------------------------------------*/
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.util.Stack;
+import java.util.ArrayList;
+
+class Main {
+  public static void main(String[] args) throws IOException{
+    BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+    int n=Integer.parseInt(br.readLine());
+
+    Stack<Integer> stack=new Stack<Integer>();
+    ArrayList<String> result=new ArrayList<String>();
+    int[] input=new int[n];
+    for(int i=0;i<n;i++){
+      input[i]=Integer.parseInt(br.readLine());
+    }
+    int k=0;
+    for(int i=1;i<=n;i++){
+      stack.push(i);
+      result.add("+");
+      while(!stack.isEmpty()){
+        if(stack.peek()==input[k]){
+          stack.pop();
+          result.add("-");
+          k++;
+        }else{
+          break;
+        }
+      }
+    }
+    if(!stack.isEmpty()){
+      System.out.println("NO");
+    }
+    else{
+      for(String s:result){
+        System.out.println(s);
+      }
+    }
+
+  }
+}
