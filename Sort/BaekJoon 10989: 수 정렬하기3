@@ -1,0 +1,79 @@
+/*
+1. 문제: 수 정렬하기3
+입력) 첫째 줄에 수의 개수 N(1 ≤ N ≤ 10,000,000)이 주어진다. 둘째 줄부터 N개의 줄에는 숫자가 주어진다. 
+      이 수는 10,000보다 작거나 같은 자연수이다.
+출력) 첫째 줄부터 N개의 줄에 오름차순으로 정렬한 결과를 한 줄에 하나씩 출력한다.
+
+2. 풀이
+counting[] 배열을 index가 들어왔을 때 counting[index]의 값을 증가시켜준다.
+그리고 index=1 인 경우부터 돌면서 counting[index]값이 0이 될때까지 출력해주면된다.
+
+3. 한 번에 풀지 못했다면 이유?
+처음에 배열크기를 잘못잡아서 런타임 에러가 발생했다.->배열 인덱스를 잘못 참조했을 때 발생.
+----------------------------------------------------------------------------*/
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+
+class Main{
+  public static void main(String[] args) throws IOException{
+
+    BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+    BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(System.out));
+    int N=Integer.parseInt(br.readLine());
+  
+    int[] counting=new int[10001];
+    
+    for(int i=0;i<N;i++){
+      int k=Integer.parseInt(br.readLine());
+      counting[k]++;
+    }
+    for(int i=1;i<counting.length;i++){
+      while(0<counting[i]--){
+        bw.write(i+"\n");
+      }
+    }
+   
+    bw.close();
+  }
+}
+/*-------------------------------------------------------------------------------------
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+
+class Main{
+  public static void main(String[] args) throws IOException{
+
+    BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+    BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(System.out));
+    int N=Integer.parseInt(br.readLine());
+    int[] input=new int[N];
+    int[] counting=new int[10001];
+    int[] result=new int[N];
+    
+    for(int i=0;i<N;i++){
+      input[i]=Integer.parseInt(br.readLine());
+    }
+    for(int i=0;i<input.length;i++){
+      counting[input[i]]++;
+    }
+    for(int i=2;i<counting.length;i++){
+      counting[i]+=counting[i-1];
+    }
+    for(int i=input.length-1;i>=0;i--){
+      int value=input[i];
+      counting[value]--;
+      result[counting[value]]=value;
+    }
+    for(int i:result){
+      bw.write(i+"\n");
+    }
+    bw.close();
+  }
+}
+*/
