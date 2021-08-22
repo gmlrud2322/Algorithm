@@ -1,0 +1,61 @@
+/*
+1. 문제: 주유소
+입력) 표준 입력으로 다음 정보가 주어진다. 
+      첫 번째 줄에는 도시의 개수를 나타내는 정수 N(2 ≤ N ≤ 100,000)이 주어진다. 
+      다음 줄에는 인접한 두 도시를 연결하는 도로의 길이가 제일 왼쪽 도로부터 N-1개의 자연수로 주어진다. 
+      다음 줄에는 주유소의 리터당 가격이 제일 왼쪽 도시부터 순서대로 N개의 자연수로 주어진다. 
+      제일 왼쪽 도시부터 제일 오른쪽 도시까지의 거리는 1이상 1,000,000,000 이하의 자연수이다. 
+      리터당 가격은 1 이상 1,000,000,000 이하의 자연수이다. 
+출력) 표준 출력으로 제일 왼쪽 도시에서 제일 오른쪽 도시로 가는 최소 비용을 출력한다. 
+
+입력      |  출력
+4         |  18
+2 3 1     | 
+5 2 4 1   |
+
+2. 풀이
+차례로 거리를 담을 배열과 리터당 가격을 담을 배열을 만들어 저장한다.
+리터당 거리는 결국 min은 cost[i]와 cost[i+1]중 최솟값이 된다는 것을 생각하면 쉽게 풀 수 있다.
+
+3. 한 번에 풀지 못했다면 이유?
+처음에 문제를 잘못 읽고 리터당 최대 가격을 잘못 봐서 min 초기값을 10000으로 잡고 
+왜 계속 부분점수를 받는지 이해를 못했다.
++범위가 크기 때문에 int대신 long으로 쓰는 것을 항상 생각할 것!
+
+------------------------------------------------------------------------------------------*/
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.util.StringTokenizer;
+
+class Main {
+  public static void main(String[] args) throws IOException{
+    BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+    BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(System.out));
+    
+    int N=Integer.parseInt(br.readLine());
+    StringTokenizer st=new StringTokenizer(br.readLine()," ");
+    long[] d=new long[N-1];
+    for(int i=0;i<N-1;i++){
+      d[i]=Long.parseLong(st.nextToken());
+    }
+    long[] cost=new long[N];
+    st=new StringTokenizer(br.readLine()," ");
+    for(int i=0;i<N;i++){
+      cost[i]=Long.parseLong(st.nextToken());
+    }
+
+    long min=cost[0];
+    long result=0;
+    for(int i=0;i<N-1;i++){
+      if(cost[i]<min){
+        min=cost[i];}
+      result+=d[i]*min;
+    }
+    bw.write(String.valueOf(result));
+    bw.close();
+  }
+}
