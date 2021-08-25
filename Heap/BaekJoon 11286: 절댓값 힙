@@ -1,0 +1,119 @@
+/*
+1. 문제: 절댓값 힙
+절댓값 힙은 다음과 같은 연산을 지원하는 자료구조이다.
+ 1) 배열에 정수 x (x ≠ 0)를 넣는다.
+ 2) 배열에서 절댓값이 가장 작은 값을 출력하고, 그 값을 배열에서 제거한다. 
+    절댓값이 가장 작은 값이 여러개일 때는, 가장 작은 수를 출력하고, 그 값을 배열에서 제거한다.
+프로그램은 처음에 비어있는 배열에서 시작하게 된다.
+
+입력) 첫째 줄에 연산의 개수 N(1≤N≤100,000)이 주어진다. 다음 N개의 줄에는 연산에 대한 정보를 나타내는 정수 x가 주어진다. 
+      만약 x가 0이 아니라면 배열에 x라는 값을 넣는(추가하는) 연산이고, 
+      x가 0이라면 배열에서 절댓값이 가장 작은 값을 출력하고 그 값을 배열에서 제거하는 경우이다. 
+      입력되는 정수는 -2^31보다 크고, 2^31보다 작다.
+출력) 입력에서 0이 주어진 회수만큼 답을 출력한다. 
+      만약 배열이 비어 있는 경우인데 절댓값이 가장 작은 값을 출력하라고 한 경우에는 0을 출력하면 된다.
+      
+2. 풀이
+입력할 때와 출력할 때로 나눠서 생각한다.
+입력할 때 절대값을 비교하여 절대값이 작은 경우, 절대값이 같지만 자식노드는 음수인데 부모노드가 양수인 경우는
+작은 값이 위에 있어야하므로 스왑을 해줘야한다.
+출력할 때는 먼저 비어있을 땐 0을 리턴.
+꼭대기 가장 작은 값을 먼저 출력값에 저장하고 노드의 마지막 값과 스왑한다음 마지막 값을 지워준다.
+while문은 자식노드가 있는 경우만 동작하게 되고
+보통 heap처럼 왼쪽 노드와 오른쪽 노드중 작은 값을 min, minIndex에 저장한다.
+그리고 min값과 꼭대기값을 비교하여 min값보다 크게되면 밑으로 내려가는 구조이다.
++절대값이 작고, 절대값이 같은 경우 작은 값이 먼저 출력되는 점을 고려하여 조건에 추가해주면된다.
+
+3. 한 번에 풀지 못했다면 이유?
+입력할 때 자식노드의 값이 부모노드랑 비교하교 스왑하게되면 부모노드로 번호로 바껴야하는데
+잘못해서 while문 밖에 뒀다.
+heap구현 하는데 시간이 오래걸렸다. 연습이 더 필요한 것 같다.
+---------------------------------------------------------------------------------------------*/
+
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+
+class Main{
+  static ArrayList<Long> heap;
+  public static void main(String[] args) throws IOException{
+
+    BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+    BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(System.out));
+    int x=Integer.parseInt(br.readLine());
+    heap=new ArrayList<>();
+    ArrayList<Long> result=new ArrayList<>();
+
+    for(int i=0;i<x;i++){
+      long input=Long.parseLong(br.readLine());
+      if(input==0){
+        result.add(delete());
+      }
+      else{
+        insert(input);
+      }
+    }
+    for(int i=0;i<result.size();i++){
+      bw.write(result.get(i).toString()+"\n");
+    }
+    bw.close();
+  }
+
+  public static void insert(long input){
+    heap.add(input);
+    int k=heap.size()-1;//자식노드
+    int p=0;
+    while(k>0){
+      p=(k-1)/2;//부모노드
+      if((Math.abs(heap.get(k))<Math.abs(heap.get(p)))||(Math.abs(heap.get(k))==Math.abs(heap.get(p))&&heap.get(k)<heap.get(p))){
+        long temp=heap.get(k);
+        heap.set(k,heap.get(p));
+        heap.set(p,temp);
+      }//절대값이 작은 경우, 절대값은 같은데 음수인 경우
+      else{
+        break;
+      }
+      k=p;
+    }
+  }
+  public static long delete(){
+    if(heap.isEmpty()){
+      return 0;
+    }
+    long result=heap.get(0);
+    heap.set(0, heap.get(heap.size()-1));
+    heap.remove(heap.size()-1);
+    int n=0; //맨위 노드
+    
+    while(2*n<heap.size()-1){
+      int minIndex=2*n+1; //왼쪽 자식 노드
+      long min=heap.get(minIndex); 
+      if((2*n+2<heap.size())&&(Math.abs(heap.get(minIndex))>Math.abs(heap.get(2*n+2)))){
+        minIndex=2*n+2;
+        min=heap.get(minIndex);
+      } //오른쪽 자식노드가 절대값이 작은 경우
+      if((2*n+2<heap.size())&&(Math.abs(heap.get(minIndex))==Math.abs(heap.get(2*n+2)))&&(heap.get(minIndex)>(heap.get(2*n+2)))){
+        minIndex=2*n+2;
+        min=heap.get(minIndex);
+      } //오른쪽 자식노드가 절대값은 같고 오른쪽 노드가 더 작은 경우
+      if(Math.abs(heap.get(n))<Math.abs(heap.get(minIndex))){
+        break;
+      }
+      if(Math.abs(heap.get(n))>Math.abs(heap.get(minIndex))){
+        long temp=heap.get(n);
+        heap.set(n, min);
+        heap.set(minIndex, temp);
+      }//자식노드가 절대값이 작을때
+      if((Math.abs(heap.get(n))==Math.abs(heap.get(minIndex)))&&(heap.get(n)>min)){
+        long temp=heap.get(n);
+        heap.set(n, min);
+        heap.set(minIndex, temp);
+      }//자식노드 절대값이 같은데 작은 경우
+     n=minIndex;
+    }
+    return result; 
+  }
+}
