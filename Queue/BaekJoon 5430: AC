@@ -1,0 +1,141 @@
+/*
+1. 문제: AC
+AC는 정수 배열에 연산을 하기 위해 만든 언어이다. 이 언어에는 두 가지 함수 R(뒤집기)과 D(버리기)가 있다.
+함수 R은 배열에 있는 숫자의 순서를 뒤집는 함수이고, D는 첫 번째 숫자를 버리는 함수이다. 
+배열이 비어있는데 D를 사용한 경우에는 에러가 발생한다.
+함수는 조합해서 한 번에 사용할 수 있다. 예를 들어, "AB"는 A를 수행한 다음에 바로 이어서 B를 수행하는 함수이다. 
+예를 들어, "RDD"는 배열을 뒤집은 다음 처음 두 숫자를 버리는 함수이다.
+배열의 초기값과 수행할 함수가 주어졌을 때, 최종 결과를 구하는 프로그램을 작성하시오.
+
+입력) 첫째 줄에 테스트 케이스의 개수 T가 주어진다. T는 최대 100이다.
+      각 테스트 케이스의 첫째 줄에는 수행할 함수 p가 주어진다. p의 길이는 1보다 크거나 같고, 100,000보다 작거나 같다.
+      다음 줄에는 배열에 들어있는 수의 개수 n이 주어진다. (0 ≤ n ≤ 100,000)
+      다음 줄에는 [x1,...,xn]과 같은 형태로 배열에 들어있는 수가 주어진다. (1 ≤ xi ≤ 100)
+      전체 테스트 케이스에 주어지는 p의 길이의 합과 n의 합은 70만을 넘지 않는다.
+출력) 각 테스트 케이스에 대해서, 입력으로 주어진 정수 배열에 함수를 수행한 결과를 출력한다. 만약, 에러가 발생한 경우에는 error를 출력한다.
+
+2. 풀이
+dequeue를 사용하지 않고, 배열로 구현했다.
+입력하는 값을 charAt()을 사용하여 한 글자씩 받아준다. 숫자의 경우는 24인 경우 하나의 문자열로 받아줘야하기 때문에
+StringBuilder()를 사용하여 ','를 만나는 경우 다시 초기화 시켜주고 그 값을 int로 변환해 num배열에 저장했다.
+AC함수는 R과 D가 있다. R은 결국 R이 짝수인 경우는 배열의 변화가 없다. 그렇기 때문에
+R의 갯수를 count하여 R이 홀수이면 배열 뒤에서부터 읽고, 짝수이면 배열의 앞에서부터 읽으면 된다.
+delete는 R의 갯수에 따라 back, front의 값을 감/증 하여 배열의 시작, 끝 값을 바꿔준다.
+이 때, n--를 해줘서 n이 0인 경우는 무조건 error라는 boolean 변수의 값을 true로 변경하여
+error가 발생하는 경우를 체크한다.
+
+3. 한 번에 풀지 못 했다면 이유?
+   1)처음에 50%에서 실패 
+     ->실패했던 이유는 입력 값이 R, 0, []이 들어가는 경우 내가 작성한 코드대로 라면
+     num[front]의 값이 들어가 [0]으로 결과 값이 출력됐다.
+     n!=0인 경우에만 해당 코드가 동작하도록 조건을 추가하여 해결.
+     
+   2) 50% 시간초과
+     ->기존 코드에서는 reverse()코드를 만들어 직접 뒤집어주는 과정을 거쳤다.
+     RRRRRRRR이런 경우 직접 뒤집어주는 작업을하면 시간이 굉장히 오래걸리기 때문에
+     R인 경우 Rcnt라는 변수로 count를 하여 R!=0인 경우는 
+     num[back]부터 출력, delete()하는 과정으로 바꿔줬다.
+     
+-----------------------------------------------------------------------*/
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+
+class Main{
+  static String p;
+  static int n;
+  static String input;
+  static int[] num;
+  static int front;
+  static int back;
+  static ArrayList<String> result;
+  static boolean error;
+  static int Rcnt;
+  
+  public static void main(String[] args) throws IOException{
+    BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+    BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(System.out));
+
+    int T=Integer.parseInt(br.readLine()); 
+    for(int t=0;t<T;t++){
+      p=br.readLine();//AC함수
+      n=Integer.parseInt(br.readLine());//숫자 들어있는 배열 수
+      input=br.readLine();//[x1, ...xn]
+      num= new int[100001];
+      front=0;
+      back=0;
+      result=new ArrayList<>();
+      error=false;
+      Rcnt=0;
+
+      StringBuilder tmp=new StringBuilder();//숫자 저장하기 위한 임시 string
+      if(n!=0){
+        for(int i=1;i<input.length()-1;i++){
+          if(input.charAt(i)==','){
+            num[back]=Integer.parseInt(tmp.toString());
+            tmp=new StringBuilder();
+            back++;
+          }
+          else{
+            tmp.append(input.charAt(i));
+          }
+        }
+        num[back]=Integer.parseInt(tmp.toString());
+      }
+
+      for(int i=0;i<p.length();i++){
+        if(p.charAt(i)=='R'){
+          Rcnt++;
+        }
+        else{
+          delete();
+        } 
+      }
+
+      if(error==false){
+        bw.write("[");
+        if(Rcnt%2!=0&&n!=0){
+          for(int i=back;i>=front;i--){
+            bw.write(String.valueOf(num[i]));
+            if(i>front){
+              bw.write(',');
+            }
+          }
+        }
+        else if(Rcnt%2==0&&n!=0){
+          for(int i=front;i<=back;i++){
+            bw.write(String.valueOf(num[i]));
+            if(i<back){
+              bw.write(',');
+            }
+          }
+        }
+        
+        bw.write("]\n");
+      }
+      else{
+        bw.write("error\n");
+      }
+    }
+    bw.close();
+  }
+
+  static void delete(){
+    if(n==0){
+      error=true;
+    }
+    else{
+      if(Rcnt%2==0){
+        front++;
+      }
+      else{
+        back--;
+      }
+      n--;
+    }
+  }
+}
