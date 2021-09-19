@@ -1,0 +1,30 @@
+import java.util.Scanner;
+ 
+public class Main {
+	public static void main(String[] args) {
+		
+		Scanner in = new Scanner(System.in);
+        
+		int N = in.nextInt();
+ 
+		StringBuilder[] p = new StringBuilder[201];
+		
+		for(int i = 0; i < p.length; i++) {
+			p[i] = new StringBuilder();
+		}
+		
+		for(int i = 0; i < N; i++) {
+			int age = in.nextInt();
+			String name = in.next();
+			
+			p[age].append(age).append(' ').append(name).append('\n');
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		for(StringBuilder val : p) {
+			sb.append(val);
+		}
+        
+		System.out.println(sb);
+	}
+}
