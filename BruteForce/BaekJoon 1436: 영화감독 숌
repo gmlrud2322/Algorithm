@@ -32,9 +32,7 @@ class Main{
     BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(System.out));
 
     int N=Integer.parseInt(br.readLine());
-    StringBuilder sb=new StringBuilder();
     
-    sb.append("666");
     int num=666;
     int count=1;
 
